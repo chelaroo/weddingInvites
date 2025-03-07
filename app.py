@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, render_template, request, jsonify, make_response, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
@@ -154,6 +154,10 @@ def check_submission():
     if submitted_cookie:
         return jsonify({'hasSubmitted': True}), 200
     return jsonify({'hasSubmitted': False}), 200
+
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(app.static_folder, 'robots.txt')
 
 if __name__ == '__main__':
     app.run(debug=False, host="0.0.0.0", port=80)
