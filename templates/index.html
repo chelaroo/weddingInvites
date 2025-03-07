@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="names">Cristian & Ana</h1>
+            <p class="invitation-text">Cu inimile pline de emoție și bucurie, noi</p>
+            <p class="invitation-text">Vă invităm să fiți alături de noi la celebrarea căsătoriei noastre.</p>
+        </div>
+
+        <div class="date-time">
+            <h2>Sambata, 19 Iulie 2025</h2>
+            <div class="countdown">
+                <div class="countdown-item">
+                    <div id="days">--</div>
+                    <small>Zile</small>
+                </div>
+                <div class="countdown-item">
+                    <div id="hours">--</div>
+                    <small>Ore</small>
+                </div>
+                <div class="countdown-item">
+                    <div id="minutes">--</div>
+                    <small>Minute</small>
+                </div>
+                <div class="countdown-item">
+                    <div id="seconds">--</div>
+                    <small>Secunde</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="location">
+            <p>Vom petrece împreună la</p>
+            <h3>Mellya, Strada Grigore Gafencu</h3>
+            <p>la ora 20:00</p>
+            <div class="buttons">
+                <a href="#" class="btn btn-primary" onclick="openWaze()">Waze</a>
+                <a href="#" class="btn btn-primary" onclick="openGoogleMaps()">Google Maps</a>
+            </div>
+        </div>
+
+        <div class="parents">
+            <p>Alături ne vor fi părinții</p>
+            <p>Sorin & Oana • Marian & Elena</p>
+            <p>Și nașii</p>
+            <p>Rares & Lidia</p>
+        </div>
+
+        <div id="already-submitted" style="display: none;" class="success-message">
+            <h3>Vă mulțumim pentru răspuns!</h3>
+            <p>Am primit confirmarea dumneavoastră.</p>
+        </div>
+
+        <div id="response-msg" style="display: none;" class="response-message"></div>
+
+        <form id="rsvp-form">
+            <h3 class="form-section-title">Doriți să participați?</h3>
+            
+            <div class="form-group">
+                <label for="name">Prenume, Nume:</label>
+                <input type="text" id="name" placeholder="Introduceți numele complet" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Adresa de email:</label>
+                <input type="email" id="email" placeholder="Introduceți adresa de email" required>
+            </div>
+
+            <div class="form-group">
+                <label>Confirmare prezență:</label>
+                <label class="radio-option">
+                    <input type="radio" name="attendance_status" value="confirmed" required>
+                    <span class="radio-checkmark"></span>
+                    Da, confirm prezența!
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="attendance_status" value="declined">
+                    <span class="radio-checkmark"></span>
+                    Nu, nu pot să particip!
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="attendance_status" value="undecided">
+                    <span class="radio-checkmark"></span>
+                    Încă nu m-am hotărât!
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Veniți însoțit/ă?</label>
+                <label class="radio-option">
+                    <input type="radio" name="coming_with" value="plus_one" required>
+                    <span class="radio-checkmark"></span>
+                    Vin însoțit/ă
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="coming_with" value="alone">
+                    <span class="radio-checkmark"></span>
+                    Vin singur/ă
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Veniți însoțit/ă de copii?</label>
+                <label class="radio-option">
+                    <input type="radio" name="bringing_children" value="yes" required>
+                    <span class="radio-checkmark"></span>
+                    Da
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="bringing_children" value="no">
+                    <span class="radio-checkmark"></span>
+                    Nu
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn">Trimite răspuns</button>
+        </form>
+    </div>
+
+    <script>
+        // Your existing JavaScript for form submission
+        document.getElementById("rsvp-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            
+            const data = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                attendance: document.querySelector('input[name="attendance_status"]:checked').value,
+                accompanied: document.querySelector('input[name="coming_with"]:checked').value,
+                children: document.querySelector('input[name="bringing_children"]:checked').value
+            };
+
+            try {
+                const response = await fetch("/submit", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                document.getElementById("response-msg").innerText = result.message;
+
+                if (response.ok) {
+                    document.getElementById("rsvp-form").style.display = "none";
+                    document.getElementById("already-submitted").style.display = "block";
+                }
+            } catch (error) {
+                document.getElementById("response-msg").innerText = "A apărut o eroare. Vă rugăm încercați din nou.";
+                console.error('Error:', error);
+            }
+        });
+
+        // Check submission status when page loads
+        async function checkSubmissionStatus() {
+            try {
+                const response = await fetch('/check-submission');
+                const data = await response.json();
+                
+                // Debug log
+                console.log('Submission status:', data);
+                
+                if (data.hasSubmitted === true) {  // Explicit check
+                    document.getElementById('rsvp-form').style.display = 'none';
+                    document.getElementById('already-submitted').style.display = 'block';
+                } else {
+                    // Make sure form is visible and success message is hidden
+                    document.getElementById('rsvp-form').style.display = 'block';
+                    document.getElementById('already-submitted').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error checking submission status:', error);
+                // On error, show the form
+                document.getElementById('rsvp-form').style.display = 'block';
+                document.getElementById('already-submitted').style.display = 'none';
+            }
+        }
+
+        // Run check when page loads
+        window.addEventListener('load', checkSubmissionStatus);
+
+        // Functions for map links
+        function openWaze() {
+            // Replace with your actual coordinates
+            window.open('https://www.waze.com/live-map/directions/ro/bucuresti/bucuresti/mellya?navigate=yes&to=place.ChIJEb2OHz8DskAR_Ik4RywSE9g', '_blank');
+        }
+
+        function openGoogleMaps() {
+            // Replace with your actual coordinates
+            window.open('https://www.google.com/maps?q=Mellya+Strada+Grigore+Gafencu', '_blank');
+        }
+
+        // Add this function to format numbers with leading zeros
+        function padNumber(number) {
+            return number < 10 ? '0' + number : number;
+        }
+
+        // Updated countdown function
+        function updateCountdown() {
+            // Set wedding date: July 19, 2025 at 20:00 (months are 0-based, so 6 is July)
+            const weddingDate = new Date(2025, 6, 19, 20, 0, 0);
+            
+            function update() {
+                const now = new Date();
+                const distance = weddingDate.getTime() - now.getTime();
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').innerText = days;
+                document.getElementById('hours').innerText = padNumber(hours);
+                document.getElementById('minutes').innerText = padNumber(minutes);
+                document.getElementById('seconds').innerText = padNumber(seconds);
+
+                if (distance < 0) {
+                    clearInterval(timer);
+                    document.getElementById('days').innerText = '0';
+                    document.getElementById('hours').innerText = '00';
+                    document.getElementById('minutes').innerText = '00';
+                    document.getElementById('seconds').innerText = '00';
+                }
+            }
+
+            update();
+            const timer = setInterval(update, 1000);
+        }
+
+        // Start the countdown when page loads
+        updateCountdown();
+    </script>
+</body>
+</html>
