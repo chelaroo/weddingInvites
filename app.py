@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import os
 from flask import Flask, render_template, request, jsonify, make_response, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
