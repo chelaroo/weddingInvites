@@ -57,10 +57,17 @@ def validate_email(email):
     return bool(re.match(pattern, email))
 
 def validate_name(name):
-    return bool(name and len(name) <= 255 and not re.search(r'[<>{}]', name))
+    if not name:
+        return False
+    # Allow letters, spaces, and common name characters
+    return bool(re.match(r'^[a-zA-ZăâîșțĂÂÎȘȚ\s\'-]{1,255}$', name))
 
 def sanitize_input(text):
-    return bleach.clean(text, strip=True)
+    if not text:
+        return text
+    # Remove any HTML tags and escape special characters
+    cleaned = bleach.clean(str(text).strip(), tags=[], attributes={})
+    return cleaned
 
 # Database setup
 db = SQLAlchemy(app)
@@ -74,7 +81,7 @@ class Guest(db.Model):
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True)
     attendance_status = db.Column(db.String(20), nullable=False)  # Changed from 'attendance'
-    coming_with = db.Column(db.String(10), nullable=False)  # Changed from 'accompanied'
+    coming_with = db.Column(db.String(255), nullable=False)  # Changed length to accommodate names
     bringing_children = db.Column(db.Boolean, nullable=False)  # Changed from String to Boolean
     created_at = db.Column(db.DateTime, nullable=True, server_default=db.func.now())
 
@@ -83,68 +90,140 @@ def index():
     return render_template('index.html')
 
 @app.route('/submit', methods=['POST'])
-@rate_limit(max_requests=5, window_seconds=60)  # 5 requests per minute
+@rate_limit(max_requests=5, window_seconds=60)
 def submit():
     if request.cookies.get('submitted'):
-        return jsonify({'status': 'error', 'message': 'You have already submitted'}), 400
+        return jsonify({'status': 'error', 'message': 'Ați trimis deja un răspuns.'}), 400
 
     try:
         data = request.get_json()
         if not data:
-            return jsonify({'status': 'error', 'message': 'Invalid data format'}), 400
+            return jsonify({'status': 'error', 'message': 'Format de date invalid.'}), 400
 
-        # Validate and sanitize inputs
-        name = sanitize_input(data.get('name', ''))
-        email = sanitize_input(data.get('email', ''))
-        attendance_status = data.get('attendance')
+        # Get form data with proper error handling
+        name = data.get('name')
+        email = data.get('email')
+        attendance = data.get('attendance')
         coming_with = data.get('accompanied')
-        bringing_children = data.get('children')
+        children = data.get('children')
+        
+        # Debug logging
+        print("Received data:", {
+            'name': name,
+            'email': email,
+            'attendance': attendance,
+            'coming_with': coming_with,
+            'children': children
+        })
+        
+        # Basic presence validation
+        if not all([name, email, attendance, coming_with is not None, children]):
+            missing_fields = []
+            if not name: missing_fields.append("nume")
+            if not email: missing_fields.append("email")
+            if not attendance: missing_fields.append("confirmare prezență")
+            if coming_with is None: missing_fields.append("însoțitor")
+            if not children: missing_fields.append("copii")
+            
+            return jsonify({
+                'status': 'error', 
+                'message': f'Vă rugăm completați toate câmpurile: {", ".join(missing_fields)}'
+            }), 400
+        
+        # Sanitize inputs
+        name = sanitize_input(name)
+        email = sanitize_input(email)
+        coming_with = sanitize_input(coming_with)
 
-        # Input validation
+        # Validate name
         if not validate_name(name):
-            return jsonify({'status': 'error', 'message': 'Invalid name'}), 400
+            return jsonify({
+                'status': 'error', 
+                'message': 'Numele poate conține doar litere, spații și caracterele \'-\''
+            }), 400
+            
+        # Validate email
         if not validate_email(email):
-            return jsonify({'status': 'error', 'message': 'Invalid email'}), 400
-        if attendance_status not in ['confirmed', 'declined', 'undecided']:
-            return jsonify({'status': 'error', 'message': 'Invalid attendance status'}), 400
-        if coming_with not in ['alone', 'plus_one']:
-            return jsonify({'status': 'error', 'message': 'Invalid guest option'}), 400
-        if bringing_children not in ['yes', 'no']:
-            return jsonify({'status': 'error', 'message': 'Invalid children option'}), 400
+            return jsonify({
+                'status': 'error', 
+                'message': 'Formatul adresei de email este invalid.'
+            }), 400
+            
+        # Validate attendance
+        if attendance not in ['confirmed', 'declined', 'undecided']:
+            return jsonify({
+                'status': 'error', 
+                'message': 'Opțiune de prezență invalidă.'
+            }), 400
+            
+        # Validate coming_with
+        if coming_with != 'alone' and not validate_name(coming_with):
+            return jsonify({
+                'status': 'error', 
+                'message': 'Numele însoțitorului poate conține doar litere, spații și caracterele \'-\''
+            }), 400
+            
+        # Validate children option
+        if children not in ['yes', 'no']:
+            return jsonify({
+                'status': 'error', 
+                'message': 'Opțiune invalidă pentru copii.'
+            }), 400
 
-        # Check if email already exists
+        # Convert children to boolean
+        bringing_children = (children == 'yes')
+
+        # Check for existing email
         existing_guest = Guest.query.filter_by(email=email).first()
         if existing_guest:
-            return jsonify({'status': 'error', 'message': 'This email has already been registered'}), 400
+            return jsonify({
+                'status': 'error', 
+                'message': 'Acest email a fost deja înregistrat.'
+            }), 400
 
-        new_guest = Guest(
-            name=name,
-            email=email,
-            attendance_status=attendance_status,
-            coming_with=coming_with,
-            bringing_children=(bringing_children == 'yes')
-        )
+        # Create new guest
+        try:
+            new_guest = Guest(
+                name=name,
+                email=email,
+                attendance_status=attendance,
+                coming_with=coming_with,
+                bringing_children=bringing_children
+            )
+            
+            db.session.add(new_guest)
+            db.session.commit()
+            print("Successfully added guest to database")
+            
+        except Exception as db_error:
+            db.session.rollback()
+            print(f"Database error: {str(db_error)}")
+            return jsonify({
+                'status': 'error', 
+                'message': f'Eroare la salvarea datelor: {str(db_error)}'
+            }), 500
 
-        db.session.add(new_guest)
-        db.session.commit()
-
-        response = make_response(jsonify({'status': 'success', 'message': 'Response recorded'}))
-        # Set secure cookie
+        response = make_response(jsonify({
+            'status': 'success', 
+            'message': 'Răspunsul dvs. a fost înregistrat. Vă mulțumim!'
+        }))
         response.set_cookie(
             'submitted', 
             'true', 
-            max_age=60*60*24*365,  # 1 year
-            httponly=True,         # Prevent XSS
-            secure=True,           # Only send over HTTPS
-            samesite='Strict'      # Prevent CSRF
+            max_age=60*60*24*365,
+            httponly=True,
+            secure=True,
+            samesite='Strict'
         )
         return response
 
     except Exception as e:
         db.session.rollback()
-        # Log the error here but don't send details to client
-        print(f"Error: {str(e)}")  # In production, use proper logging
-        return jsonify({'status': 'error', 'message': 'An error occurred'}), 500
+        print(f"Error in submit: {str(e)}")
+        return jsonify({
+            'status': 'error', 
+            'message': f'A apărut o eroare: {str(e)}'
+        }), 500
 
 @app.route('/check-submission', methods=['GET'])
 def check_submission():

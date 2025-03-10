@@ -94,16 +94,22 @@
 
             <div class="form-group">
                 <label>Veniți însoțit/ă?</label>
-                <label class="radio-option">
-                    <input type="radio" name="coming_with" value="plus_one" required>
-                    <span class="radio-checkmark"></span>
-                    Vin însoțit/ă
-                </label>
-                <label class="radio-option">
-                    <input type="radio" name="coming_with" value="alone">
-                    <span class="radio-checkmark"></span>
-                    Vin singur/ă
-                </label>
+                <div class="radio-options-container">
+                    <label class="radio-option">
+                        <input type="radio" name="coming_with" value="plus_one" required onchange="toggleAttendantName(true)">
+                        <span class="radio-checkmark"></span>
+                        Vin însoțit/ă
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="coming_with" value="alone" onchange="toggleAttendantName(false)">
+                        <span class="radio-checkmark"></span>
+                        Vin singur/ă
+                    </label>
+                    <div id="attendant-name-container" style="display: none; margin-top: 10px;">
+                        <label for="attendant-name">Numele însoțitorului:</label>
+                        <input type="text" id="attendant-name" placeholder="Introduceți numele însoțitorului">
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -125,35 +131,68 @@
     </div>
 
     <script>
-        // Your existing JavaScript for form submission
+        // Update the form submission code to better display errors
         document.getElementById("rsvp-form").addEventListener("submit", async function(event) {
             event.preventDefault();
             
+            // Clear any previous error messages
+            const responseMsg = document.getElementById("response-msg");
+            responseMsg.style.display = "none";
+            responseMsg.innerText = "";
+            
+            // Disable submit button to prevent multiple submissions
+            const submitBtn = document.querySelector(".submit-btn");
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Se trimite...";
+            
+            const comingWith = document.querySelector('input[name="coming_with"]:checked').value;
+            const attendantName = document.getElementById('attendant-name').value;
+
+            // Create the data object with exact matching fields
             const data = {
-                name: document.getElementById("name").value,
-                email: document.getElementById("email").value,
+                name: document.getElementById("name").value.trim(),
+                email: document.getElementById("email").value.trim(),
                 attendance: document.querySelector('input[name="attendance_status"]:checked').value,
-                accompanied: document.querySelector('input[name="coming_with"]:checked').value,
+                accompanied: comingWith === 'plus_one' ? attendantName.trim() : 'alone',
                 children: document.querySelector('input[name="bringing_children"]:checked').value
             };
+
+            console.log('Submitting data:', data);
 
             try {
                 const response = await fetch("/submit", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
                     body: JSON.stringify(data)
                 });
 
                 const result = await response.json();
-                document.getElementById("response-msg").innerText = result.message;
+                console.log('Server response:', result);
+
+                // Display the response message
+                responseMsg.innerText = result.message;
+                responseMsg.className = response.ok ? "response-message success" : "response-message error";
+                responseMsg.style.display = "block";
+                
+                // Scroll to the message
+                responseMsg.scrollIntoView({ behavior: 'smooth' });
 
                 if (response.ok) {
                     document.getElementById("rsvp-form").style.display = "none";
                     document.getElementById("already-submitted").style.display = "block";
                 }
             } catch (error) {
-                document.getElementById("response-msg").innerText = "A apărut o eroare. Vă rugăm încercați din nou.";
                 console.error('Error:', error);
+                responseMsg.innerText = "A apărut o eroare. Vă rugăm încercați din nou.";
+                responseMsg.className = "response-message error";
+                responseMsg.style.display = "block";
+            } finally {
+                // Re-enable the submit button
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Trimite răspuns";
             }
         });
 
@@ -235,6 +274,18 @@
 
         // Start the countdown when page loads
         updateCountdown();
+
+        function toggleAttendantName(show) {
+            const container = document.getElementById('attendant-name-container');
+            const input = document.getElementById('attendant-name');
+            container.style.display = show ? 'block' : 'none';
+            if (show) {
+                input.setAttribute('required', '');
+            } else {
+                input.removeAttribute('required');
+                input.value = '';
+            }
+        }
     </script>
 </body>
 </html>
