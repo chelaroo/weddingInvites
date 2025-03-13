@@ -119,23 +119,36 @@ def submit():
         })
         
         # Basic presence validation
-        if not all([name, email, attendance, coming_with is not None, children]):
+        if not all([name, email, attendance]):
             missing_fields = []
             if not name: missing_fields.append("nume")
             if not email: missing_fields.append("email")
             if not attendance: missing_fields.append("confirmare prezență")
-            if coming_with is None: missing_fields.append("însoțitor")
-            if not children: missing_fields.append("copii")
             
             return jsonify({
                 'status': 'error', 
                 'message': f'Vă rugăm completați toate câmpurile: {", ".join(missing_fields)}'
             }), 400
         
+        # For declined attendance, we don't need to validate coming_with and children
+        if attendance != 'declined':
+            if not all([coming_with is not None, children]):
+                missing_fields = []
+                if coming_with is None: missing_fields.append("însoțitor")
+                if not children: missing_fields.append("copii")
+                
+                return jsonify({
+                    'status': 'error', 
+                    'message': f'Vă rugăm completați toate câmpurile: {", ".join(missing_fields)}'
+                }), 400
+        
         # Sanitize inputs
         name = sanitize_input(name)
         email = sanitize_input(email)
-        coming_with = sanitize_input(coming_with)
+        
+        # Only sanitize coming_with if it's not 'n/a'
+        if coming_with != 'n/a':
+            coming_with = sanitize_input(coming_with)
 
         # Validate name
         if not validate_name(name):
@@ -158,22 +171,24 @@ def submit():
                 'message': 'Opțiune de prezență invalidă.'
             }), 400
             
-        # Validate coming_with
-        if coming_with != 'alone' and not validate_name(coming_with):
-            return jsonify({
-                'status': 'error', 
-                'message': 'Numele însoțitorului poate conține doar litere, spații și caracterele \'-\''
-            }), 400
-            
-        # Validate children option
-        if children not in ['yes', 'no']:
-            return jsonify({
-                'status': 'error', 
-                'message': 'Opțiune invalidă pentru copii.'
-            }), 400
+        # Only validate coming_with and children if attendance is not declined
+        if attendance != 'declined':
+            # Validate coming_with
+            if coming_with != 'alone' and not validate_name(coming_with):
+                return jsonify({
+                    'status': 'error', 
+                    'message': 'Numele însoțitorului poate conține doar litere, spații și caracterele \'-\''
+                }), 400
+                
+            # Validate children option
+            if children not in ['yes', 'no']:
+                return jsonify({
+                    'status': 'error', 
+                    'message': 'Opțiune invalidă pentru copii.'
+                }), 400
 
         # Convert children to boolean
-        bringing_children = (children == 'yes')
+        bringing_children = (children == 'yes') if children != 'n/a' else False
 
         # Check for existing email
         existing_guest = Guest.query.filter_by(email=email).first()

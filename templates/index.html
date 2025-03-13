@@ -76,27 +76,27 @@
             <div class="form-group">
                 <label>Confirmare prezență:</label>
                 <label class="radio-option">
-                    <input type="radio" name="attendance_status" value="confirmed" required>
+                    <input type="radio" name="attendance_status" value="confirmed" required onchange="toggleAttendanceQuestions('confirmed')">
                     <span class="radio-checkmark"></span>
                     Da, confirm prezența!
                 </label>
                 <label class="radio-option">
-                    <input type="radio" name="attendance_status" value="declined">
+                    <input type="radio" name="attendance_status" value="declined" onchange="toggleAttendanceQuestions('declined')">
                     <span class="radio-checkmark"></span>
                     Nu, nu pot să particip!
                 </label>
                 <label class="radio-option">
-                    <input type="radio" name="attendance_status" value="undecided">
+                    <input type="radio" name="attendance_status" value="undecided" onchange="toggleAttendanceQuestions('undecided')">
                     <span class="radio-checkmark"></span>
                     Încă nu m-am hotărât!
                 </label>
             </div>
 
-            <div class="form-group">
+            <div id="coming-with-group" class="form-group" style="display: none;">
                 <label>Veniți însoțit/ă?</label>
                 <div class="radio-options-container">
                     <label class="radio-option">
-                        <input type="radio" name="coming_with" value="plus_one" required onchange="toggleAttendantName(true)">
+                        <input type="radio" name="coming_with" value="plus_one" onchange="toggleAttendantName(true)">
                         <span class="radio-checkmark"></span>
                         Vin însoțit/ă
                     </label>
@@ -112,10 +112,10 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div id="children-group" class="form-group" style="display: none;">
                 <label>Veniți însoțit/ă de copii?</label>
                 <label class="radio-option">
-                    <input type="radio" name="bringing_children" value="yes" required>
+                    <input type="radio" name="bringing_children" value="yes">
                     <span class="radio-checkmark"></span>
                     Da
                 </label>
@@ -145,17 +145,26 @@
             submitBtn.disabled = true;
             submitBtn.innerText = "Se trimite...";
             
-            const comingWith = document.querySelector('input[name="coming_with"]:checked').value;
-            const attendantName = document.getElementById('attendant-name').value;
-
+            const attendanceValue = document.querySelector('input[name="attendance_status"]:checked').value;
+            
             // Create the data object with exact matching fields
             const data = {
                 name: document.getElementById("name").value.trim(),
                 email: document.getElementById("email").value.trim(),
-                attendance: document.querySelector('input[name="attendance_status"]:checked').value,
-                accompanied: comingWith === 'plus_one' ? attendantName.trim() : 'alone',
-                children: document.querySelector('input[name="bringing_children"]:checked').value
+                attendance: attendanceValue
             };
+            
+            // Only add these fields if attendance is confirmed or undecided
+            if (attendanceValue === 'confirmed' || attendanceValue === 'undecided') {
+                const comingWith = document.querySelector('input[name="coming_with"]:checked').value;
+                const attendantName = document.getElementById('attendant-name').value;
+                data.accompanied = comingWith === 'plus_one' ? attendantName.trim() : 'alone';
+                data.children = document.querySelector('input[name="bringing_children"]:checked').value;
+            } else {
+                // If declined, set default values
+                data.accompanied = 'n/a';
+                data.children = 'n/a';
+            }
 
             console.log('Submitting data:', data);
 
@@ -212,6 +221,10 @@
                     // Make sure form is visible and success message is hidden
                     document.getElementById('rsvp-form').style.display = 'block';
                     document.getElementById('already-submitted').style.display = 'none';
+                    
+                    // Initialize form state - hide additional questions by default
+                    document.getElementById('coming-with-group').style.display = 'none';
+                    document.getElementById('children-group').style.display = 'none';
                 }
             } catch (error) {
                 console.error('Error checking submission status:', error);
@@ -274,6 +287,41 @@
 
         // Start the countdown when page loads
         updateCountdown();
+
+        // Add this function to toggle attendance-related questions
+        function toggleAttendanceQuestions(attendanceValue) {
+            const comingWithGroup = document.getElementById('coming-with-group');
+            const childrenGroup = document.getElementById('children-group');
+            const comingWithInputs = document.querySelectorAll('input[name="coming_with"]');
+            const childrenInputs = document.querySelectorAll('input[name="bringing_children"]');
+            
+            if (attendanceValue === 'confirmed' || attendanceValue === 'undecided') {
+                // Show questions and make them required
+                comingWithGroup.style.display = 'block';
+                childrenGroup.style.display = 'block';
+                
+                // Make inputs required
+                comingWithInputs.forEach(input => input.setAttribute('required', ''));
+                childrenInputs.forEach(input => input.setAttribute('required', ''));
+            } else {
+                // Hide questions and make them not required
+                comingWithGroup.style.display = 'none';
+                childrenGroup.style.display = 'none';
+                
+                // Remove required attribute
+                comingWithInputs.forEach(input => input.removeAttribute('required'));
+                childrenInputs.forEach(input => input.removeAttribute('required'));
+                
+                // Reset selections
+                comingWithInputs.forEach(input => input.checked = false);
+                childrenInputs.forEach(input => input.checked = false);
+                
+                // Hide and clear attendant name if visible
+                document.getElementById('attendant-name-container').style.display = 'none';
+                document.getElementById('attendant-name').value = '';
+                document.getElementById('attendant-name').removeAttribute('required');
+            }
+        }
 
         function toggleAttendantName(show) {
             const container = document.getElementById('attendant-name-container');
