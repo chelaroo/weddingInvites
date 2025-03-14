@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Check if already successfully ran
+if [ -f setupt.txt ]; then
+   echo "Setup already ran"
+fi
+
 # Colors for output
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -79,3 +84,5 @@ echo "Host: localhost"
 
 # Uncomment to run the application
 # python app.py
+
+touch setup.txt
