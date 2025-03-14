@@ -23,8 +23,8 @@ fi
 
 # Generate random password for database user
 DB_PASSWORD=$(openssl rand -base64 12)
-DB_USER="customUser"
-DB_NAME="weddingInvites"
+DB_USER="customuser"
+DB_NAME="weddinginvites"
 APP_SECRET_KEY=$(openssl rand -base64 24)
 
 # Create database user and database
