@@ -21,7 +21,7 @@ body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
     text-align: center;
@@ -29,6 +29,8 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
+    position: relative;
+    overflow: visible;
 }
 
 .header {
@@ -121,6 +123,7 @@ body {
 }
 
 #rsvp-form {
+    width: 100%;
     max-width: 600px;
     margin: 40px auto;
     padding: 40px;
@@ -216,31 +219,25 @@ input[type="email"]:focus {
 }
 
 @media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
-
     .names {
         font-size: 2.5em;
     }
-
+    .container {
+        padding: 10px;
+    }
     .countdown {
         flex-wrap: wrap;
     }
-
     .countdown-item {
         min-width: 70px;
     }
-
     .buttons {
         flex-direction: column;
         gap: 10px;
     }
-
     .btn {
         width: 100%;
     }
-
     #rsvp-form {
         max-width: 100%;
         padding: 20px;
@@ -377,4 +374,140 @@ input[type="email"]:focus {
 #attendant-name-container label {
     display: block;
     margin-bottom: 5px;
+}
+
+/* Content wrapper */
+.content-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Section containers */
+.section-container {
+    position: relative;
+    width: 100%;
+    margin: 60px 0;
+    padding: 40px 20px;
+    border-radius: 15px;
+}
+
+/* Decorative Background Images */
+.decorative-image {
+    position: fixed;
+    width: 20vw;
+    height: 20vw;
+    max-width: 200px;
+    max-height: 200px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Desktop positioning */
+.header-section .decorative-image.left {
+    top: 10%;
+    left: 25%;
+}
+
+.header-section .decorative-image.right {
+    top: 10%;
+    right: 25%;
+}
+
+.date-section .decorative-image.left {
+    top: 40%;
+    left: 25%;
+}
+
+.date-section .decorative-image.right {
+    top: 40%;
+    right: 25%;
+}
+
+.location-section .decorative-image.left {
+    top: 70%;
+    left: 25%;
+}
+
+.location-section .decorative-image.right {
+    top: 70%;
+    right: 25%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .decorative-image {
+        width: 20vw;  /* 20% of viewport width */
+        height: 20vw;
+        max-width: 150px;
+        max-height: 150px;
+    }
+
+    [class*="-section"] .decorative-image.left {
+        left: 3vw;  /* 5% of viewport width to the left */
+    }
+    
+    [class*="-section"] .decorative-image.right {
+        right: 3vw;  /* 5% of viewport width to the right */
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .section-container {
+        margin: 30px 0;
+        padding: 20px 10px;
+    }
+
+    .decorative-image {
+        width: 30vw;  /* Smaller on mobile */
+        height: 30vw;
+        /* max-width: 100px;
+        max-height: 100px; */
+        opacity: 0.7;
+    }
+
+    [class*="-section"] .decorative-image.left {
+        left: 3vw;
+    }
+    
+    [class*="-section"] .decorative-image.right {
+        right: 3vw;
+    }
+}
+
+/* Background images */
+.decorative-image.proposal {
+    background-image: url('../images/illustrations/proposal.png');
+    transform: rotate(-5deg);
+}
+
+.decorative-image.gaming {
+    background-image: url('../images/illustrations/gaming.png');
+    transform: rotate(5deg);
+}
+
+.decorative-image.farm {
+    background-image: url('../images/illustrations/farm.png');
+    transform: rotate(-5deg);
+}
+
+.decorative-image.dinner {
+    background-image: url('../images/illustrations/dinner.png');
+    transform: rotate(-5deg);
+}
+
+.decorative-image.paris {
+    background-image: url('../images/illustrations/paris.png');
+    transform: rotate(5deg);
+}
+
+.decorative-image.selfie {
+    background-image: url('../images/illustrations/selfie.png');
+    transform: rotate(5deg);
 }

@@ -8,126 +8,152 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1 class="names">Cristian & Ana</h1>
-            <p class="invitation-text">Cu inimile pline de emoție și bucurie, noi</p>
-            <p class="invitation-text">Vă invităm să fiți alături de noi la celebrarea căsătoriei noastre.</p>
-        </div>
-
-        <div class="date-time">
-            <h2>Sambata, 19 Iulie 2025</h2>
-            <div class="countdown">
-                <div class="countdown-item">
-                    <div id="days">--</div>
-                    <small>Zile</small>
-                </div>
-                <div class="countdown-item">
-                    <div id="hours">--</div>
-                    <small>Ore</small>
-                </div>
-                <div class="countdown-item">
-                    <div id="minutes">--</div>
-                    <small>Minute</small>
-                </div>
-                <div class="countdown-item">
-                    <div id="seconds">--</div>
-                    <small>Secunde</small>
+        <div class="content-wrapper">
+            <!-- Header section -->
+            <div class="section-container header-section">
+                <div class="decorative-image proposal left"></div>
+                <div class="decorative-image paris right"></div>
+                
+                <div class="header">
+                    <h1 class="names">Cristian & Ana</h1>
+                    <p class="invitation-text">Cu inimile pline de emoție și bucurie, noi</p>
+                    <p class="invitation-text">Vă invităm să fiți alături de noi la celebrarea căsătoriei noastre.</p>
                 </div>
             </div>
-        </div>
 
-        <div class="location">
-            <p>Vom petrece împreună la</p>
-            <h3>Mellya, Strada Grigore Gafencu</h3>
-            <p>la ora 20:00</p>
-            <div class="buttons">
-                <a href="#" class="btn btn-primary" onclick="openWaze()">Waze</a>
-                <a href="#" class="btn btn-primary" onclick="openGoogleMaps()">Google Maps</a>
-            </div>
-        </div>
-
-        <div class="parents">
-            <p>Alături ne vor fi părinții</p>
-            <p>Sorin & Oana • Marian & Elena</p>
-            <p>Și nașii</p>
-            <p>Rares & Lidia</p>
-        </div>
-
-        <div id="already-submitted" style="display: none;" class="success-message">
-            <h3>Vă mulțumim pentru răspuns!</h3>
-            <p>Am primit confirmarea dumneavoastră.</p>
-        </div>
-
-        <div id="response-msg" style="display: none;" class="response-message"></div>
-
-        <form id="rsvp-form">
-            <h3 class="form-section-title">Doriți să participați?</h3>
-            
-            <div class="form-group">
-                <label for="name">Prenume, Nume:</label>
-                <input type="text" id="name" placeholder="Introduceți numele complet" required>
-            </div>
-
-            <div class="form-group">
-                <label for="email">Adresa de email:</label>
-                <input type="email" id="email" placeholder="Introduceți adresa de email" required>
-            </div>
-
-            <div class="form-group">
-                <label>Confirmare prezență:</label>
-                <label class="radio-option">
-                    <input type="radio" name="attendance_status" value="confirmed" required onchange="toggleAttendanceQuestions('confirmed')">
-                    <span class="radio-checkmark"></span>
-                    Da, confirm prezența.
-                </label>
-                <label class="radio-option">
-                    <input type="radio" name="attendance_status" value="declined" onchange="toggleAttendanceQuestions('declined')">
-                    <span class="radio-checkmark"></span>
-                    Nu, nu pot să particip.
-                </label>
-                <label class="radio-option">
-                    <input type="radio" name="attendance_status" value="undecided" onchange="toggleAttendanceQuestions('undecided')">
-                    <span class="radio-checkmark"></span>
-                    Încă nu m-am hotărât.
-                </label>
-            </div>
-
-            <div id="coming-with-group" class="form-group" style="display: none;">
-                <label>Veniți însoțit/ă?</label>
-                <div class="radio-options-container">
-                    <label class="radio-option">
-                        <input type="radio" name="coming_with" value="plus_one" onchange="toggleAttendantName(true)">
-                        <span class="radio-checkmark"></span>
-                        Vin însoțit/ă
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="coming_with" value="alone" onchange="toggleAttendantName(false)">
-                        <span class="radio-checkmark"></span>
-                        Vin singur/ă
-                    </label>
-                    <div id="attendant-name-container" style="display: none; margin-top: 10px;">
-                        <label for="attendant-name">Numele însoțitorului:</label>
-                        <input type="text" id="attendant-name" placeholder="Introduceți numele însoțitorului">
+            <!-- Date section -->
+            <div class="section-container date-section">
+                <div class="decorative-image gaming left"></div>
+                <div class="decorative-image dinner right"></div>
+                
+                <div class="date-time">
+                    <h2>Sambata, 19 Iulie 2025</h2>
+                    <div class="countdown">
+                        <div class="countdown-item">
+                            <div id="days">--</div>
+                            <small>Zile</small>
+                        </div>
+                        <div class="countdown-item">
+                            <div id="hours">--</div>
+                            <small>Ore</small>
+                        </div>
+                        <div class="countdown-item">
+                            <div id="minutes">--</div>
+                            <small>Minute</small>
+                        </div>
+                        <div class="countdown-item">
+                            <div id="seconds">--</div>
+                            <small>Secunde</small>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div id="children-group" class="form-group" style="display: none;">
-                <label>Veniți însoțit/ă de copii?</label>
-                <label class="radio-option">
-                    <input type="radio" name="bringing_children" value="yes">
-                    <span class="radio-checkmark"></span>
-                    Da
-                </label>
-                <label class="radio-option">
-                    <input type="radio" name="bringing_children" value="no">
-                    <span class="radio-checkmark"></span>
-                    Nu
-                </label>
+            <!-- Location section -->
+            <div class="section-container location-section">
+                <div class="decorative-image farm left"></div>
+                <div class="decorative-image selfie right"></div>
+                
+                <div class="location">
+                    <p>Vom petrece împreună la</p>
+                    <h3>Mellya, Strada Grigore Gafencu</h3>
+                    <p>la ora 20:00</p>
+                    <div class="buttons">
+                        <a href="#" class="btn btn-primary" onclick="openWaze()">Waze</a>
+                        <a href="#" class="btn btn-primary" onclick="openGoogleMaps()">Google Maps</a>
+                    </div>
+                </div>
             </div>
 
-            <button type="submit" class="submit-btn">Trimite răspuns</button>
-        </form>
+            <!-- Parents section -->
+            <div class="section-container parents-section">
+                <div class="parents">
+                    <p>Alături ne vor fi părinții</p>
+                    <p>Sorin & Oana • Marian & Elena</p>
+                    <p>Și nașii</p>
+                    <p>Rares & Lidia</p>
+                </div>
+            </div>
+
+            <!-- Form section -->
+            <div class="section-container form-section">
+                <div id="already-submitted" style="display: none;" class="success-message">
+                    <h3>Vă mulțumim pentru răspuns!</h3>
+                    <p>Am primit confirmarea dumneavoastră.</p>
+                </div>
+
+                <div id="response-msg" style="display: none;" class="response-message"></div>
+
+                <form id="rsvp-form">
+                    <h3 class="form-section-title">Doriți să participați?</h3>
+                    
+                    <div class="form-group">
+                        <label for="name">Prenume, Nume:</label>
+                        <input type="text" id="name" placeholder="Introduceți numele complet" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Adresa de email:</label>
+                        <input type="email" id="email" placeholder="Introduceți adresa de email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirmare prezență:</label>
+                        <label class="radio-option">
+                            <input type="radio" name="attendance_status" value="confirmed" required onchange="toggleAttendanceQuestions('confirmed')">
+                            <span class="radio-checkmark"></span>
+                            Da, confirm prezența.
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="attendance_status" value="declined" onchange="toggleAttendanceQuestions('declined')">
+                            <span class="radio-checkmark"></span>
+                            Nu, nu pot să particip.
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="attendance_status" value="undecided" onchange="toggleAttendanceQuestions('undecided')">
+                            <span class="radio-checkmark"></span>
+                            Încă nu m-am hotărât.
+                        </label>
+                    </div>
+
+                    <div id="coming-with-group" class="form-group" style="display: none;">
+                        <label>Veniți însoțit/ă?</label>
+                        <div class="radio-options-container">
+                            <label class="radio-option">
+                                <input type="radio" name="coming_with" value="plus_one" onchange="toggleAttendantName(true)">
+                                <span class="radio-checkmark"></span>
+                                Vin însoțit/ă
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="coming_with" value="alone" onchange="toggleAttendantName(false)">
+                                <span class="radio-checkmark"></span>
+                                Vin singur/ă
+                            </label>
+                            <div id="attendant-name-container" style="display: none; margin-top: 10px;">
+                                <label for="attendant-name">Numele însoțitorului:</label>
+                                <input type="text" id="attendant-name" placeholder="Introduceți numele însoțitorului">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="children-group" class="form-group" style="display: none;">
+                        <label>Veniți însoțit/ă de copii?</label>
+                        <label class="radio-option">
+                            <input type="radio" name="bringing_children" value="yes">
+                            <span class="radio-checkmark"></span>
+                            Da
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="bringing_children" value="no">
+                            <span class="radio-checkmark"></span>
+                            Nu
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Trimite răspuns</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
