@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Parisienne&display=swap');
 
 :root {
     --primary-color: #B8860B;
@@ -38,7 +38,7 @@ body {
 }
 
 .names {
-    font-family: 'Great Vibes', cursive;
+    font-family: 'Parisienne', cursive;
     font-size: 3.5em;
     color: var(--primary-color);
     margin: 20px 0;
