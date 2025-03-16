@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wedding Invitation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Parisienne&family=Alumni+Sans+Pinstripe:ital@0;1&family=Ms+Madi&family=Poiret+One&family=Quintessential&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -12,19 +15,19 @@
             <!-- Header section -->
             <div class="section-container header-section">
                 <div class="decorative-image proposal left"></div>
-                <div class="decorative-image paris right"></div>
+                <div class="decorative-image dinner right"></div>
                 
                 <div class="header">
                     <h1 class="names">Ana & Cristian</h1>
-                    <p class="invitation-text">Cu inimile pline de emoție și bucurie, noi</p>
-                    <p class="invitation-text">Vă invităm să fiți alături de noi la celebrarea căsătoriei noastre.</p>
+                    <p class="invitation-text">Facem nuntă!</p>
+                    <p class="invitation-text"> Pentru că ne sunteţi dragi, dorim să vă avem alături la celebrarea căsătoriei noastre.</p>
                 </div>
             </div>
 
             <!-- Date section -->
             <div class="section-container date-section">
                 <div class="decorative-image gaming left"></div>
-                <div class="decorative-image dinner right"></div>
+                <div class="decorative-image paris right"></div>
                 
                 <div class="date-time">
                     <h2>Sâmbătă, 19 Iulie 2025</h2>
@@ -55,12 +58,22 @@
                 <div class="decorative-image selfie right"></div>
                 
                 <div class="location">
-                    <p>Vom petrece împreună la</p>
+                    <p>Ceremonia religioasă va avea loc la:</p>
+                    <h3>Biserica Icoanei</h3>
+                    <p>la ora 18:00</p>
+                    <div class="buttons">
+                        <a href="#" class="btn btn-primary" onclick="openWaze('biserica')">Waze</a>
+                        <a href="#" class="btn btn-primary" onclick="openGoogleMaps('biserica')">Google Maps</a>
+                    </div>
+                </div>
+
+                <div class="location">
+                    <p>Petrecerea va avea loc la:</p>
                     <h3>Mellya, Strada Grigore Gafencu</h3>
                     <p>la ora 20:00</p>
                     <div class="buttons">
-                        <a href="#" class="btn btn-primary" onclick="openWaze()">Waze</a>
-                        <a href="#" class="btn btn-primary" onclick="openGoogleMaps()">Google Maps</a>
+                        <a href="#" class="btn btn-primary" onclick="openWaze('restaurant')">Waze</a>
+                        <a href="#" class="btn btn-primary" onclick="openGoogleMaps('restaurant')">Google Maps</a>
                     </div>
                 </div>
             </div>
@@ -68,7 +81,7 @@
             <!-- Parents section -->
             <div class="section-container parents-section">
                 <div class="name-section">
-                    <p>Alături ne vor fi părinții</p>
+                    <p>Alături ne vor fi părinții:</p>
                     <div class="name-group">
                         <div class="person">
                             <span class="first-name">Elena & Marian</span>
@@ -79,7 +92,7 @@
                             <span class="last-name">Chelaru</span>
                         </div>
                     </div>
-                    <p>Și nașii</p>
+                    <p>Și nașii:</p>
                     <div class="name-group">
                         <div class="person">
                             <span class="first-name">Lidia & Rareș</span>
@@ -171,7 +184,22 @@
     </div>
 
     <script>
-document.getElementById("rsvp-form").addEventListener("submit",async function(e){e.preventDefault();const t=document.getElementById("response-msg");t.style.display="none",t.innerText="";const n=document.querySelector(".submit-btn");n.disabled=!0,n.innerText="Se trimite...";const s=document.querySelector('input[name="attendance_status"]:checked').value,i={name:document.getElementById("name").value.trim(),email:document.getElementById("email").value.trim(),attendance:s};if("confirmed"===s||"undecided"===s){const e=document.querySelector('input[name="coming_with"]:checked').value,t=document.getElementById("attendant-name").value;i.accompanied="plus_one"===e?t.trim():"alone",i.children=document.querySelector('input[name="bringing_children"]:checked').value}else i.accompanied="n/a",i.children="n/a";try{const e=await fetch("/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(i)}),s=await e.json();t.innerText=s.message,t.className=e.ok?"response-message success":"response-message error",t.style.display="block",t.scrollIntoView({behavior:"smooth"}),e.ok&&(document.getElementById("rsvp-form").style.display="none",document.getElementById("already-submitted").style.display="block")}catch(e){t.innerText="A apărut o eroare. Vă rugăm încercați din nou.",t.className="response-message error",t.style.display="block"}finally{n.disabled=!1,n.innerText="Trimite răspuns"}});async function checkSubmissionStatus(){try{const e=await fetch("/check-submission"),t=await e.json();!0===t.hasSubmitted?(document.getElementById("rsvp-form").style.display="none",document.getElementById("already-submitted").style.display="block"):(document.getElementById("rsvp-form").style.display="block",document.getElementById("already-submitted").style.display="none",document.getElementById("coming-with-group").style.display="none",document.getElementById("children-group").style.display="none")}catch(e){document.getElementById("rsvp-form").style.display="block",document.getElementById("already-submitted").style.display="none"}}function openWaze(){window.open("https://www.waze.com/live-map/directions/ro/bucuresti/bucuresti/mellya?navigate=yes&to=place.ChIJEb2OHz8DskAR_Ik4RywSE9g","_blank")}function openGoogleMaps(){window.open("https://www.google.com/maps?q=Mellya+Strada+Grigore+Gafencu","_blank")}function padNumber(e){return e<10?"0"+e:e}function updateCountdown(){const e=new Date(2025,6,19,20,0,0);function t(){const t=e.getTime()-(new Date).getTime(),n=Math.floor(t/864e5),s=Math.floor(t%864e5/36e5),i=Math.floor(t%36e5/6e4),o=Math.floor(t%6e4/1e3);document.getElementById("days").innerText=n,document.getElementById("hours").innerText=padNumber(s),document.getElementById("minutes").innerText=padNumber(i),document.getElementById("seconds").innerText=padNumber(o),t<0&&(clearInterval(a),document.getElementById("days").innerText="0",document.getElementById("hours").innerText="00",document.getElementById("minutes").innerText="00",document.getElementById("seconds").innerText="00")}t();const a=setInterval(t,1e3)}function toggleAttendanceQuestions(e){const t=document.getElementById("coming-with-group"),n=document.getElementById("children-group"),s=document.querySelectorAll('input[name="coming_with"]'),i=document.querySelectorAll('input[name="bringing_children"]');"confirmed"===e||"undecided"===e?(t.style.display="block",n.style.display="block",s.forEach(e=>e.setAttribute("required","")),i.forEach(e=>e.setAttribute("required",""))):(t.style.display="none",n.style.display="none",s.forEach(e=>e.removeAttribute("required")),i.forEach(e=>e.removeAttribute("required")),s.forEach(e=>e.checked=!1),i.forEach(e=>e.checked=!1),document.getElementById("attendant-name-container").style.display="none",document.getElementById("attendant-name").value="",document.getElementById("attendant-name").removeAttribute("required"))}function toggleAttendantName(e){const t=document.getElementById("attendant-name-container"),n=document.getElementById("attendant-name");t.style.display=e?"block":"none",e?n.setAttribute("required",""):(n.removeAttribute("required"),n.value="")}window.addEventListener("load",checkSubmissionStatus),updateCountdown();
+document.getElementById("rsvp-form").addEventListener("submit",async function(e){e.preventDefault();const t=document.getElementById("response-msg");t.style.display="none",t.innerText="";const n=document.querySelector(".submit-btn");n.disabled=!0,n.innerText="Se trimite...";const s=document.querySelector('input[name="attendance_status"]:checked').value,i={name:document.getElementById("name").value.trim(),email:document.getElementById("email").value.trim(),attendance:s};if("confirmed"===s||"undecided"===s){const e=document.querySelector('input[name="coming_with"]:checked').value,t=document.getElementById("attendant-name").value;i.accompanied="plus_one"===e?t.trim():"alone",i.children=document.querySelector('input[name="bringing_children"]:checked').value}else i.accompanied="n/a",i.children="n/a";try{const e=await fetch("/submit",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(i)}),s=await e.json();t.innerText=s.message,t.className=e.ok?"response-message success":"response-message error",t.style.display="block",t.scrollIntoView({behavior:"smooth"}),e.ok&&(document.getElementById("rsvp-form").style.display="none",document.getElementById("already-submitted").style.display="block")}catch(e){t.innerText="A apărut o eroare. Vă rugăm încercați din nou.",t.className="response-message error",t.style.display="block"}finally{n.disabled=!1,n.innerText="Trimite răspuns"}});async function checkSubmissionStatus(){try{const e=await fetch("/check-submission"),t=await e.json();!0===t.hasSubmitted?(document.getElementById("rsvp-form").style.display="none",document.getElementById("already-submitted").style.display="block"):(document.getElementById("rsvp-form").style.display="block",document.getElementById("already-submitted").style.display="none",document.getElementById("coming-with-group").style.display="none",document.getElementById("children-group").style.display="none")}catch(e){document.getElementById("rsvp-form").style.display="block",document.getElementById("already-submitted").style.display="none"}}function openWaze(location) {
+    const locations = {
+        'biserica': 'https://ul.waze.com/ul?venue_id=17105340.171118940.3660782&overview=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location', // Replace with actual church coordinates
+        'restaurant': 'https://ul.waze.com/ul?place=ChIJEb2OHz8DskAR_Ik4RywSE9g&ll=44.48765990%2C26.08810610&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location' // Replace with actual restaurant coordinates
+    };
+    window.open(locations[location], '_blank');
+}
+
+function openGoogleMaps(location) {
+    const locations = {
+        'biserica': 'https://maps.app.goo.gl/dzZvTECC2mHYstNZ6',
+        'restaurant': 'https://maps.app.goo.gl/SnKaf64uEiz4iHkK6'
+    };
+    window.open(locations[location], '_blank');
+}
+function padNumber(e){return e<10?"0"+e:e}function updateCountdown(){const e=new Date(2025,6,19,20,0,0);function t(){const t=e.getTime()-(new Date).getTime(),n=Math.floor(t/864e5),s=Math.floor(t%864e5/36e5),i=Math.floor(t%36e5/6e4),o=Math.floor(t%6e4/1e3);document.getElementById("days").innerText=n,document.getElementById("hours").innerText=padNumber(s),document.getElementById("minutes").innerText=padNumber(i),document.getElementById("seconds").innerText=padNumber(o),t<0&&(clearInterval(a),document.getElementById("days").innerText="0",document.getElementById("hours").innerText="00",document.getElementById("minutes").innerText="00",document.getElementById("seconds").innerText="00")}t();const a=setInterval(t,1e3)}function toggleAttendanceQuestions(e){const t=document.getElementById("coming-with-group"),n=document.getElementById("children-group"),s=document.querySelectorAll('input[name="coming_with"]'),i=document.querySelectorAll('input[name="bringing_children"]');"confirmed"===e||"undecided"===e?(t.style.display="block",n.style.display="block",s.forEach(e=>e.setAttribute("required","")),i.forEach(e=>e.setAttribute("required",""))):(t.style.display="none",n.style.display="none",s.forEach(e=>e.removeAttribute("required")),i.forEach(e=>e.removeAttribute("required")),s.forEach(e=>e.checked=!1),i.forEach(e=>e.checked=!1),document.getElementById("attendant-name-container").style.display="none",document.getElementById("attendant-name").value="",document.getElementById("attendant-name").removeAttribute("required"))}function toggleAttendantName(e){const t=document.getElementById("attendant-name-container"),n=document.getElementById("attendant-name");t.style.display=e?"block":"none",e?n.setAttribute("required",""):(n.removeAttribute("required"),n.value="")}window.addEventListener("load",checkSubmissionStatus),updateCountdown();
     </script>
 </body>
 </html>

@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Parisienne&display=swap');
-
+/* Font families and variables */
 :root {
     --primary-color: #B8860B;
     --background-color: #fff;
@@ -69,20 +68,34 @@ body {
 }
 
 .first-name {
-    font-size: calc(1.1em + 0.2vw);
+    /* You can uncomment one of these font-family lines to test different fonts */
+    /* font-family: 'Parisienne', cursive; */
+    /* font-family: 'Ms Madi', cursive; */
+    font-family: 'Poiret One', cursive;
+    /* font-family: 'Quintessential', cursive; */
+    /* font-family: 'Alumni Sans Pinstripe', sans-serif; */
+    font-size: calc(1.2em + 0.2vw);
+    font-weight: 700;
     color: var(--primary-color);
     white-space: nowrap;
     margin-bottom: 0.3em;
 }
 
 .last-name {
-    font-size: calc(1em + 0.2vw);
+    /* You can uncomment one of these font-family lines to test different fonts */
+    /* font-family: 'Parisienne', cursive; */
+    /* font-family: 'Ms Madi', cursive; */
+    font-family: 'Poiret One', cursive;
+    /* font-family: 'Quintessential', cursive; */
+    /* font-family: 'Alumni Sans Pinstripe', sans-serif; */
+    font-size: calc(1.1em + 0.2vw);
+    font-weight: 700;
     color: var(--primary-color);
     white-space: nowrap;
 }
 
 .invitation-text {
-    font-size: 1.2em;
+    font-size: calc(1em + 0.2vw);;
     margin: 0.625em auto;
     color: #666;
     max-width: 50rem;
@@ -545,6 +558,34 @@ input[type="email"]:focus {
     }
 }
 
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 75em) {
+    .section-container {
+        margin: 1.875em 0;
+        padding: 1.25em 0.625em;
+    }
+
+    .decorative-image {
+        width: 30vw;
+        height: 30vw;
+        opacity: 0.7;
+    }
+
+    [class*="-section"] .decorative-image.left {
+        left: 3vw;
+    }
+    
+    [class*="-section"] .decorative-image.right {
+        right: 3vw;
+    }
+    .header-section .decorative-image.right {
+        right: -3vw;
+    }
+    .date-section .decorative-image.right {
+        right: -5vw;
+    }
+}
+
 /* Mobile styles */
 @media (max-width: 768px) {
     .section-container {
@@ -565,6 +606,13 @@ input[type="email"]:focus {
     [class*="-section"] .decorative-image.right {
         right: 3vw;
     }
+    .header-section .decorative-image.right {
+        right: -3vw;
+    }
+    .date-section .decorative-image.right {
+        right: -5vw;
+    }
+    
 }
 
 /* Background images */
@@ -585,12 +633,12 @@ input[type="email"]:focus {
 
 .decorative-image.dinner {
     background-image: url('../images/illustrations/dinner.png');
-    transform: rotate(-5deg);
+    transform: rotate(5deg);
 }
 
 .decorative-image.paris {
     background-image: url('../images/illustrations/paris.png');
-    transform: rotate(5deg);
+    transform: rotate(-5deg);
 }
 
 .decorative-image.selfie {
@@ -616,7 +664,7 @@ input[type="email"]:focus {
 }
 
 .name-section p {
-    font-style: italic;
+    /* font-style: italic; */
     color: #666;
     font-size: calc(1em + 0.2vw);
     margin: 0.625em auto;
