@@ -36,7 +36,7 @@ body {
 .header {
     width: 100%;
     max-width: 50rem;
-    margin: 0 auto 2.5em;
+    margin: 0 auto 1.5em;
 }
 
 .names {
@@ -90,7 +90,7 @@ body {
 }
 
 .date-time {
-    margin: 1.875em auto;
+    margin: 1.25em auto;
     width: 100%;
     max-width: 50rem;
 }
@@ -106,7 +106,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 1.25em;
-    margin: 1.875em auto;
+    margin: 1.25em auto;
     flex-wrap: nowrap;
     width: 100%;
     max-width: 25rem;
@@ -133,7 +133,7 @@ body {
 }
 
 .location {
-    margin: 2.5em auto;
+    margin: 1.875em auto;
     width: 100%;
     max-width: 50rem;
 }
@@ -183,8 +183,8 @@ body {
 #rsvp-form {
     width: 100%;
     max-width: 37.5rem;
-    margin: 2.5em auto;
-    padding: 2.5em;
+    margin: 1.875em auto;
+    padding: 1.875em;
     background: #fff;
     border-radius: 0.9375em;
     box-shadow: 0 0.125em 0.9375em rgba(0,0,0,0.1);
@@ -243,7 +243,7 @@ input[type="email"]:focus {
 }
 
 .parents {
-    margin: 2.5em auto;
+    margin: 1.875em auto;
     width: 100%;
     max-width: 50rem;
     text-align: center;
@@ -325,7 +325,7 @@ input[type="email"]:focus {
         padding: 0.625em;
     }
     .header, .location, .date-time, .parents {
-        margin: 1.25em auto;
+        margin: 1em auto;
     }
     .invitation-text {
         font-size: 1.1em;
@@ -336,6 +336,10 @@ input[type="email"]:focus {
     }
     .date-time h2 {
         font-size: 1.8em;
+    }
+    .section-container {
+        margin: 1.25em 0;
+        padding: 1em 0.625em;
     }
 }
 
@@ -483,8 +487,8 @@ input[type="email"]:focus {
 .section-container {
     position: relative;
     width: 100%;
-    margin: 3.75em 0;
-    padding: 2.5em 1.25em;
+    margin: 1.875em 0;
+    padding: 1.875em 1.25em;
     border-radius: 0.9375em;
 }
 
