@@ -44,6 +44,6 @@ fi
 # aws s3 cp $BACKUP_FILE s3://your-bucket-name/database-backups/
 
 # Option 3: Send via email (for small databases only)
-# echo "Wedding database backup" | mail -a $BACKUP_FILE -s "Database Backup $TIMESTAMP" your-email@example.com
+echo "Wedding database backup" | mail -a $BACKUP_FILE -s "Database Backup $TIMESTAMP" chelaruc197@gmail.com
 
 echo "Backup process completed." 
