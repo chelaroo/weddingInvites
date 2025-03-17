@@ -48,11 +48,43 @@ else
     exit 1
 fi
 
-# Send CSV via email
-echo "Sending CSV export via email..."
-echo "Wedding website guests list as of $(date)" | mail -a $CSV_FILE -s "Wedding Guests List $TIMESTAMP" chelaruc197@gmail.com
+# Send CSV via email using mutt (if installed)
+if command -v mutt &> /dev/null; then
+    echo "Sending CSV export via email using mutt..."
+    echo "Wedding website guests list as of $(date)" | mutt -s "Wedding Guests List $TIMESTAMP" -a "$CSV_FILE" -- chelaruc197@gmail.com
+# Fallback to mail if mutt is not available
+elif command -v mail &> /dev/null; then
+    echo "Sending CSV export via email using mail..."
+    # Create a temporary MIME email
+    MIME_EMAIL=$(mktemp)
+    (
+        echo "From: wedding@$(hostname -f)"
+        echo "To: chelaruc197@gmail.com"
+        echo "Subject: Wedding Guests List $TIMESTAMP"
+        echo "MIME-Version: 1.0"
+        echo 'Content-Type: multipart/mixed; boundary="boundary-wedding-backup"'
+        echo ""
+        echo "--boundary-wedding-backup"
+        echo 'Content-Type: text/plain; charset="utf-8"'
+        echo ""
+        echo "Wedding website guests list as of $(date)"
+        echo ""
+        echo "--boundary-wedding-backup"
+        echo "Content-Type: text/csv; name=\"$(basename $CSV_FILE)\""
+        echo "Content-Disposition: attachment; filename=\"$(basename $CSV_FILE)\""
+        echo "Content-Transfer-Encoding: base64"
+        echo ""
+        base64 "$CSV_FILE"
+        echo ""
+        echo "--boundary-wedding-backup--"
+    ) > "$MIME_EMAIL"
+    
+    # Send the email
+    cat "$MIME_EMAIL" | sendmail -t
+    rm "$MIME_EMAIL"
+else
+    echo "Warning: Neither mutt nor mail is available. Email not sent."
+    echo "Please install mutt with: sudo apt-get install mutt"
+fi
 
-# Optional: Send full backup via email (uncomment if needed)
-# echo "Wedding database backup" | mail -a $BACKUP_FILE -s "Database Backup $TIMESTAMP" chelaruc197@gmail.com
-
-echo "Backup process completed." 
+echo "Backup process completed."
